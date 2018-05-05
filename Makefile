@@ -4,7 +4,7 @@
 ###
 
 .DELETE_ON_ERROR:
-.PHONY: install clean all
+.PHONY: install clean all static
 
 GZIP := gzip
 GZIPFLAGS := --best --to-stdout
@@ -12,7 +12,13 @@ GZIPFLAGS := --best --to-stdout
 all: fbgrab fbgrab.1.gz
 
 fbgrab: fbgrab.c
-	$(CC) -g -Wall $(CFLAGS) $(LDFLAGS) $< -lpng -lz -o $@
+	$(CC) -g -Wall $(CFLAGS) $(LDFLAGS) $< -lpng -lz -lm -o $@
+	strip $@
+
+static: CFLAGS += -static
+
+static: fbgrab
+
 
 fbgrab.1.gz: fbgrab.1.man
 	$(GZIP) $(GZIPFLAGS) $< > $@
